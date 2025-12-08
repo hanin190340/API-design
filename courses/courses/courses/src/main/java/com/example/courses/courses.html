@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses Management</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 5px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-delete { background:#dc3545 }
+        .btn-blue { background:#007bff }
+        .btn-gray { background:#6c757d }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+
+        th {
+            background: #4CAF50;
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f1f1f1;
+        }
+
+        .form-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: #eef2f5;
+            border-radius: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Course Management System</h1>
+
+    <!-- ACTION BUTTONS -->
+    <button onclick="openCreateForm()">Create Course</button>
+    <button onclick="getAllCourses()">Get All Courses</button>
+    <button onclick="openGetById()">Get By ID</button>
+
+    <!-- TABLE -->
+    <table id="coursesTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Language</th>
+            <th>Instructor</th>
+            <th>Create Date</th>
+            <th>Updated Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- CREATE FORM -->
+    <div class="form-section" id="createForm" style="display:none;">
+        <h2>Create Course</h2>
+
+        <label>Name</label>
+        <input id="cName">
+
+        <label>Language</label>
+        <input id="cLang">
+
+        <label>Instructor</label>
+        <input id="cInst">
+
+        <button onclick="submitCreate()">Create</button>
+    </div>
+
+    <!-- GET BY ID FORM -->
+    <div class="form-section" id="getByIdForm" style="display:none;">
+        <h2>Get Course By ID</h2>
+        <input id="searchId" placeholder="Enter Course ID">
+        <button onclick="submitGetById()">Search</button>
+    </div>
+
+    <!-- UPDATE FORM -->
+    <div class="form-section" id="updateForm" style="display:none;">
+        <h2>Update Course</h2>
+
+        <label>ID (read only)</label>
+        <input id="editId" readonly>
+
+        <label>Name</label>
+        <input id="editName">
+
+        <label>Language</label>
+        <input id="editLanguage">
+
+        <label>Instructor</label>
+        <input id="editInstructor">
+
+        <button onclick="submitUpdate()">Save Changes</button>
+    </div>
+
+</div>
+
+
+<script>
+
+    // --------------------
+    // GET ALL COURSES
+    // --------------------
+    function getAllCourses() {
+        fetch("http://localhost:8080/getAll")
+            .then(res => res.json())
+            .then(data => loadTable(data));
+    }
+
+    // Load data into table
+    function loadTable(data) {
+        const tbody = document.querySelector("#coursesTable tbody");
+        tbody.innerHTML = "";
+
+        data.forEach(c => {
+            const row = `
+                <tr>
+                    <td>${c.id}</td>
+                    <td>${c.name}</td>
+                    <td>${c.language}</td>
+                    <td>${c.instructorName}</td>
+                    <td>${c.createDate}</td>
+                    <td>${c.updatedDate ?? "-"}</td>
+                    <td>
+                        <button class="btn-blue" onclick="editCourse(${c.id}, '${c.name}', '${c.language}', '${c.instructorName}')">
+                            Edit
+                        </button>
+                        <button class="btn-delete" onclick="deleteCourse(${c.id})">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // --------------------
+    // DELETE COURSE
+    // --------------------
+    function deleteCourse(id) {
+        fetch(`http://localhost:8080/delete/${id}`, { method: "DELETE" })
+            .then(res => res.text())
+            .then(msg => {
+                alert(msg);
+                getAllCourses();
+            });
+    }
+
+    // --------------------
+    // OPEN CREATE FORM
+    // --------------------
+    function openCreateForm() {
+        document.getElementById("createForm").style.display = "block";
+    }
+
+    // SUBMIT CREATE
+    function submitCreate() {
+        const obj = {
+            name: document.getElementById("cName").value,
+            language: document.getElementById("cLang").value,
+            instructorName: document.getElementById("cInst").value
+        };
+
+        fetch("http://localhost:8080/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(obj)
+        })
+        .then(res => res.text())
+        .then(msg => {
+            alert(msg);
+            getAllCourses();
+        });
+    }
+
+    // --------------------
+    // OPEN GET BY ID
+    // --------------------
+    function openGetById() {
+        document.getElementById("getByIdForm").style.display = "block";
+    }
+
+    // SUBMIT GET BY ID
+    function submitGetById() {
+        const id = document.getElementById("searchId").value;
+
+        fetch(`http://localhost:8080/getById?id=${id}`)
+            .then(res => res.json())
+            .then(data => loadTable([data])); // Show only one row
+    }
+
+
+    // --------------------
+    // EDIT COURSE (open form)
+    // --------------------
+    function editCourse(id, name, lang, inst) {
+        document.getElementById("updateForm").style.display = "block";
+
+        document.getElementById("editId").value = id;
+        document.getElementById("editName").value = name;
+        document.getElementById("editLanguage").value = lang;
+        document.getElementById("editInstructor").value = inst;
+    }
+
+    // SUBMIT UPDATE
+    function submitUpdate() {
+        const obj = {
+            id: Number(document.getElementById("editId").value),
+            name: document.getElementById("editName").value,
+            language: document.getElementById("editLanguage").value,
+            instructorName: document.getElementById("editInstructor").value
+        };
+
+        fetch("http://localhost:8080/Update", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(obj)
+        })
+        .then(res => res.text())
+        .then(msg => {
+            alert(msg);
+            getAllCourses();
+        });
+    }
+
+</script>
+
+</body>
+</html>

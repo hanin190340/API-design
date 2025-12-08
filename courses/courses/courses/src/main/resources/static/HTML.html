@@ -1,0 +1,85 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Create Department</title>
+    <style>/* compact styles similar to earlier file */
+  body{font-family:Inter,system-ui,Arial;background:#f6f9fc;color:#04263b;padding:28px}
+  .card{max-width:720px;margin:0 auto;background:#fff;padding:18px;border-radius:10px;box-shadow:0 6px 20px rgba(2,6,23,0.06)}
+  label{display:block;margin-top:12px;font-weight:600}
+  input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef6;margin-top:6px}
+  .row{display:flex;gap:10px}
+  .row > *{flex:1}
+  button{margin-top:12px;padding:10px 14px;border-radius:8px;border:none;background:#06b6d4;color:#012}
+  .small{font-size:13px;color:#64748b}
+  pre{background:#0b1220;color:#cfe8f0;padding:12px;border-radius:8px;overflow:auto}
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>Create Department</h2>
+    <p class="small">Sends <code>POST /department/createDepartment</code></p>
+
+    <label>Name *</label>
+    <input id="name" required placeholder="Computer Science">
+
+    <label>Code</label>
+    <input id="code" placeholder="CS">
+
+    <label>Description</label>
+    <textarea id="description" rows="4"></textarea>
+
+    <label>Head</label>
+    <input id="head">
+
+    <label>Active</label>
+    <select id="isActive"><option value="true">true</option><option value="false">false</option></select>
+
+    <div style="display:flex;gap:8px;align-items:center">
+        <button id="createBtn">Create</button>
+        <button id="clearBtn" type="button">Clear</button>
+        <div id="status" style="margin-left:8px;font-weight:600"></div>
+    </div>
+
+    <h4>Request preview</h4>
+    <pre id="preview">{}</pre>
+</div>
+
+<script>
+    // CONFIG: change to your backend if needed
+    const apiUrl = '/department/createDepartment'; // e.g. 'http://localhost:9091/department/createDepartment'
+
+    const nameEl = document.getElementById('name');
+    const codeEl = document.getElementById('code');
+    const descEl = document.getElementById('description');
+    const headEl = document.getElementById('head');
+    const activeEl = document.getElementById('isActive');
+    const preview = document.getElementById('preview');
+    const status = document.getElementById('status');
+
+    function getObj(){
+      return { name: nameEl.value || null, code: codeEl.value || null, description: descEl.value || null, head: headEl.value || null, isActive: activeEl.value === 'true' };
+    }
+    function updatePreview(){ preview.textContent = JSON.stringify(getObj(),null,2); }
+
+    document.getElementById('createBtn').addEventListener('click', async ()=>{
+      status.textContent='';
+      const data = getObj();
+      if(!data.name){ status.textContent='Name required'; return; }
+      updatePreview();
+      try{
+        const resp = await fetch(apiUrl,{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+        if(resp.ok){ const json = await resp.json().catch(()=>null); status.style.color='green'; status.textContent='Created'; if(json) preview.textContent = JSON.stringify(json,null,2); }
+        else{ const txt = await resp.text(); status.style.color='crimson'; status.textContent = 'Error: '+resp.status + ' '+ txt; }
+      }catch(e){ status.style.color='crimson'; status.textContent='Network: '+e.message; }
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', ()=>{ nameEl.value=''; codeEl.value=''; descEl.value=''; headEl.value=''; updatePreview(); status.textContent=''; });
+
+    [nameEl,codeEl,descEl,headEl,activeEl].forEach(el=>el.addEventListener('input', updatePreview));
+    updatePreview();
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Departments Dashboard</title>
+    <style>
+        :root{--bg:#0f1724;--card:#071022;--accent:#06b6d4}
+        body{font-family:Inter,system-ui,Arial;margin:0;background:linear-gradient(180deg,#071022,#071733);color:#e6eef6}
+        .container{max-width:1100px;margin:28px auto;padding:18px}
+        .header{display:flex;justify-content:space-between;align-items:center}
+        .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px}
+        .input, input,textarea,select{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6eef6}
+        .table{margin-top:12px}
+        .row{display:flex;gap:8px;align-items:center;padding:10px;border-bottom:1px solid rgba(255,255,255,0.03)}
+        .btn{padding:8px 10px;border-radius:8px;border:none;cursor:pointer}
+        .btn.primary{background:linear-gradient(90deg,var(--accent),#0ea5a3);color:#012}
+        .btn.warn{background:#f59e0b}
+        .btn.danger{background:#ef4444}
+        .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center}
+        .modal.show{display:flex}
+        .modal .panel{width:720px;background:#0b1220;padding:16px;border-radius:12px}
+        .small{font-size:13px;color:#94a3b8}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>Departments Dashboard</h2>
+        <div>
+            <input id="q" placeholder="Search by name" class="input"><button id="newBtn" class="btn primary">New</button>
+        </div>
+    </div>
+
+    <div id="list" class="card table"></div>
+</div>
+
+<div id="modal" class="modal"><div class="panel">
+    <h3 id="modalTitle">New Department</h3>
+    <label>Name</label><input id="mname"><label>Code</label><input id="mcode"><label>Description</label><textarea id="mdesc"></textarea><label>Head</label><input id="mhead"><label>Active</label><select id="mactive"><option value="true">true</option><option value="false">false</option></select>
+    <div style="margin-top:10px"><button id="saveBtn" class="btn primary">Save</button> <button id="cancelBtn" class="btn">Cancel</button></div>
+</div></div>
+
+<script>
+    const apiBase = '/department';
+    let items = [];
+    const listEl = document.getElementById('list');
+    async function load(){ listEl.innerHTML='Loading...'; try{ const r = await fetch(apiBase + '/getAll'); if(!r.ok){ listEl.textContent='Error '+r.status; return;} items = await r.json(); render(items);}catch(e){ listEl.textContent='Network: '+e.message }}
+    function render(arr){ if(!arr || arr.length===0){ listEl.innerHTML='<div style="padding:12px">No records</div>'; return;} listEl.innerHTML = arr.map(it=>`<div class='row'><div style='flex:1'><strong>${it.name||''}</strong><div class='small'>${it.code||''} • ${it.description||''}</div></div><div><button class='btn warn' onclick='startEdit(${it.id})'>Edit</button> <button class='btn danger' onclick='del(${it.id})'>Delete</button></div></div>`).join(''); }
+    window.del = async function(id){ if(!confirm('Delete?')) return; try{ const r = await fetch(apiBase + '/delete?id='+id,{ method:'DELETE' }); if(r.ok){ await load(); } else alert('Failed: '+r.status)}catch(e){ alert('Network: '+e.message); }}
+    document.getElementById('q').addEventListener('input', ()=>{ const q = document.getElementById('q').value.toLowerCase(); render(items.filter(i=> (i.name||'').toLowerCase().includes(q) )); });
+
+    // modal handlers
+    const modal = document.getElementById('modal'); const mtitle = document.getElementById('modalTitle');
+    const mname = document.getElementById('mname'), mcode=document.getElementById('mcode'), mdesc=document.getElementById('mdesc'), mhead=document.getElementById('mhead'), mactive=document.getElementById('mactive');
+    let editingId = null;
+    document.getElementById('newBtn').addEventListener('click', ()=>{ editingId=null; mtitle.textContent='New Department'; mname.value=''; mcode.value=''; mdesc.value=''; mhead.value=''; mactive.value='true'; modal.classList.add('show'); });
+    document.getElementById('cancelBtn').addEventListener('click', ()=>modal.classList.remove('show'));
+    window.startEdit = async function(id){ editingId = id; mtitle.textContent='Edit Department #'+id; try{ const r = await fetch(apiBase + '/getById?id='+id); if(!r.ok){ alert('Failed: '+r.status); return;} const d = await r.json(); mname.value=d.name||''; mcode.value=d.code||''; mdesc.value=d.description||''; mhead.value=d.head||''; mactive.value = d.isActive? 'true':'false'; modal.classList.add('show'); }catch(e){ alert('Network: '+e.message) } }
+    document.getElementById('saveBtn').addEventListener('click', async ()=>{
+      const payload = { name:mname.value, code:mcode.value, description:mdesc.value, head:mhead.value, isActive: mactive.value==='true' };
+      try{
+        if(editingId){ payload.id = editingId; const r = await fetch(apiBase + '/update',{ method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }); if(r.ok){ modal.classList.remove('show'); await load(); } else alert('Failed: '+r.status); }
+        else { const r = await fetch(apiBase + '/createDepartment',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)}); if(r.ok){ modal.classList.remove('show'); await load(); } else alert('Failed: '+r.status); }
+      }catch(e){ alert('Network: '+e.message) }
+    });
+
+    load();
+</script>
+</body>
+</html>
+

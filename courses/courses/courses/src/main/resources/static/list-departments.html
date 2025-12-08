@@ -1,0 +1,41 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Departments — List</title>
+    <style>
+        body{font-family:Inter,system-ui,Arial;background:#f6f9fc;color:#04263b;padding:20px}
+        .table{max-width:980px;margin:0 auto;background:#fff;padding:14px;border-radius:10px;box-shadow:0 6px 20px rgba(2,6,23,0.06)}
+        .row{display:flex;gap:8px;align-items:center}
+        .btn{padding:6px 10px;border-radius:8px;border:none;cursor:pointer}
+        .btn.del{background:#ef4444;color:#fff}
+        .btn.edit{background:#f59e0b;color:#fff}
+        .input{padding:8px;border-radius:8px;border:1px solid #e6eef6}
+    </style>
+</head>
+<body>
+<div class="table">
+    <h2>Departments</h2>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input id="search" class="input" placeholder="search by name">
+        <button id="refresh" class="btn">Refresh</button>
+        <a href="create-department.html"><button class="btn">Create New</button></a>
+    </div>
+
+    <div id="list"></div>
+</div>
+
+<script>
+    const apiBase = '/department'; // configure base
+    const listEl = document.getElementById('list');
+    async function loadAll(){ listEl.innerHTML='Loading...'; try{ const resp = await fetch(apiBase + '/getAll'); if(!resp.ok){ listEl.textContent='Error: '+resp.status; return;} const arr = await resp.json(); render(arr); }catch(e){ listEl.textContent='Network: '+e.message}}
+    function render(arr){ if(!arr || arr.length===0){ listEl.innerHTML='<div>No records</div>'; return;} const html = arr.map(d=>`<div style="padding:10px;border-bottom:1px solid #eef;margin-bottom:6px"><strong>${d.name||''}</strong> <span class="small">(${d.code||''})</span><div>${d.description||''}</div><div style="margin-top:6px"><button class="btn edit" onclick='goEdit(${d.id})'>Edit</button> <button class="btn del" onclick='del(${d.id})'>Delete</button></div></div>`).join(''); listEl.innerHTML = html; }
+    window.goEdit = function(id){ location.href = 'edit-department.html?id='+id }
+    window.del = async function(id){ if(!confirm('Delete #'+id+'?')) return; try{ const resp = await fetch(apiBase + '/delete?id='+id,{ method:'DELETE' }); if(resp.ok){ alert('Deleted'); loadAll(); } else { alert('Failed: '+resp.status)} }catch(e){ alert('Network: '+e.message)} }
+    document.getElementById('refresh').addEventListener('click', loadAll);
+    document.getElementById('search').addEventListener('input', ()=>{ const q = document.getElementById('search').value.toLowerCase(); const blocks = listEl.querySelectorAll('div[style]'); blocks.forEach(b=>{ b.style.display = b.textContent.toLowerCase().includes(q)?'block':'none' }) });
+    loadAll();
+</script>
+</body>
+</html>
