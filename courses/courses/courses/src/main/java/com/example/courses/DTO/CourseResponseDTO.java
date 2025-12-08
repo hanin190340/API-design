@@ -17,7 +17,8 @@ public class CourseResponseDTO {
     private String name;
     private String language;
     private Boolean isActive;
-    private InstructorSummaryDTO instructor;
-    private DepartmentSummaryDTO department;
-    private List<MarkResponseDTO> marks;
+    private Integer instructorId;
+    private Integer departmentId;
+    private List<String> marks;
+
 }

@@ -13,5 +13,6 @@ public class InstructorSummaryDTO {
     private Integer id;
     private String Name;
     private String subject;
-
+    private Integer departmentId;
+    private Integer courseId;
 }
