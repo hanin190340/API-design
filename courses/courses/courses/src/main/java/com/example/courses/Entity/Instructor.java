@@ -17,16 +17,17 @@ import java.util.Date;
 public class Instructor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Integer id;
-    String Name;
-    String Subject;
-    Date CreateDate;
-    Date UpdateDate;
-    Boolean isActive;
+    private Integer id;
+    private String Name;
+    private String Subject;
+    private Date CreateDate;
+    private Date UpdateDate;
+    private Boolean isActive;
     @OneToOne
     @JoinColumn(name = "course_id")
-    private Courses courses;
+    private Course courses;
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "department_id")
     Department department;
 
 }

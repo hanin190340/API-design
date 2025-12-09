@@ -1,9 +1,8 @@
 package com.example.courses.DTO;
 
-import com.example.courses.Entity.Courses;
+import com.example.courses.Entity.Course;
 import com.example.courses.Helper.Constants;
 import com.example.courses.Helper.HelperUtils;
-import com.example.courses.Service.InstuctorService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,8 +24,8 @@ public class CourseCreateRequestDTO {
     private Integer departmentId;
     private List<String> marks;
 
-    public static Courses covertToCourses(CourseCreateRequestDTO request) {
-        Courses courses = new Courses();
+    public static Course covertToCourses(CourseCreateRequestDTO request) {
+        Course courses = new Course();
         courses.setName(request.getName());
         courses.setLanguage(request.getLanguage());
         return courses;

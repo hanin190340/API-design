@@ -26,7 +26,7 @@ public class Mark {
     Date UpdateDate;
     Boolean isActive;
     @ManyToOne(cascade = CascadeType.ALL)
-    private Courses course;
+    private Course course;
 }
 
 

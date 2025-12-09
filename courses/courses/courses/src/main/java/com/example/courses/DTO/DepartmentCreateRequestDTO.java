@@ -1,6 +1,5 @@
 package com.example.courses.DTO;
 
-import com.example.courses.Entity.Courses;
 import com.example.courses.Entity.Department;
 import com.example.courses.Helper.Constants;
 import com.example.courses.Helper.HelperUtils;
@@ -18,6 +17,7 @@ public class DepartmentCreateRequestDTO {
 
     @NotEmpty(message = "Department name is required")
     private String name;
+
 
     public static Department covertToDepartment(DepartmentCreateRequestDTO request) {
         Department department = new Department();

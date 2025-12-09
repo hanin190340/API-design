@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -23,7 +24,8 @@ public class Department {
     String name;
     Date UpdatedDate;
     Date createDate;
-
+@OneToMany (mappedBy = "department")
+    private List<Instructor> instructors;
 
 }
 

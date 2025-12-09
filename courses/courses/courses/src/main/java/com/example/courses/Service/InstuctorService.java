@@ -3,14 +3,14 @@ package com.example.courses.Service;
 import java.util.List;
 
 import com.example.courses.DTO.InstructorCreateRequestDTO;
-import com.example.courses.Entity.Courses;
+import com.example.courses.Entity.Course;
 import com.example.courses.Entity.Department;
 import com.example.courses.Entity.Instructor;
 import com.example.courses.Helper.Constants;
 import com.example.courses.Helper.HelperUtils;
 import com.example.courses.Repository.CoursesRepository;
 import com.example.courses.Repository.DepartmentRepository;
-import com.example.courses.Repository.InstuctorRepository;
+import com.example.courses.Repository.InstructorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +18,13 @@ import java.util.Date;
 @Service
 public class InstuctorService {
     @Autowired
-    InstuctorRepository instuctorRepository;
+    InstructorRepository instructorRepository;
 @Autowired
     DepartmentRepository departmentRepository;
 @Autowired
     CoursesRepository coursesRepository;
     public List<Instructor> getAllInstructors() {
-        return instuctorRepository.findAll();
+        return instructorRepository.findAll();
     }
 
     public Instructor saveInstructor(InstructorCreateRequestDTO request)throws Exception {
@@ -36,17 +36,17 @@ public class InstuctorService {
             instructor.setDepartment(department);
         } else {
             throw new Exception(Constants.BAD_DEPARTMENT);}
-        Courses courses = coursesRepository.getCoursesById(request.getCourseId());
+        Course courses = coursesRepository.getCoursesById(request.getCourseId());
         if (HelperUtils.isNotNull(courses)) {
             instructor.setCourses(courses);
         } else {
             throw new Exception(Constants.BAD_COURSE);
         }
-        return instuctorRepository.save(instructor);
+        return instructorRepository.save(instructor);
     }
 
     public List<Instructor> getAllActiveInstructors() {
-        List<Instructor> allInstructors = instuctorRepository.findAll();
+        List<Instructor> allInstructors = instructorRepository.findAll();
         List<Instructor> activeInstructors = new java.util.ArrayList<>();
         for (Instructor i : allInstructors) {
             if (Boolean.TRUE.equals(i.getIsActive())) {
@@ -58,7 +58,7 @@ public class InstuctorService {
     }
 
     public Instructor updateInstructor(Instructor instructor) throws Exception {
-        Instructor existingInstructor = instuctorRepository.findById(instructor.getId()).get();
+        Instructor existingInstructor = instructorRepository.findById(instructor.getId()).get();
         if (!Boolean.TRUE.equals(existingInstructor.getIsActive())) {
             throw new Exception("Instructor is not active");
         }
@@ -68,25 +68,25 @@ public class InstuctorService {
             instructor.setCreateDate(existingInstructor.getCreateDate());
             instructor.setIsActive(existingInstructor.getIsActive());
 
-            return instuctorRepository.save(instructor);
+            return instructorRepository.save(instructor);
         } else {
             throw new Exception("Instructor not found");
         }
     }
 
     public void deleteInstructor(Integer id) throws Exception {
-        Instructor existingInstructor = instuctorRepository.findById(id).get();
+        Instructor existingInstructor = instructorRepository.findById(id).get();
         System.out.println(existingInstructor.getIsActive());
         if (existingInstructor != null && existingInstructor.getIsActive()) {
             existingInstructor.setUpdateDate(new Date());
             existingInstructor.setIsActive(false);
-            instuctorRepository.save(existingInstructor);
+            instructorRepository.save(existingInstructor);
         } else {
             throw new Exception("Instructor not found");
     }
 }
 public Instructor getInstructorById(Integer id) throws Exception {
-        Instructor existingInstructor = instuctorRepository.findById(id).get();
+        Instructor existingInstructor = instructorRepository.findById(id).get();
         if (existingInstructor != null && existingInstructor.getIsActive()) {
             return existingInstructor;
         } else {

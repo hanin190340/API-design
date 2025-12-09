@@ -1,7 +1,6 @@
 package com.example.courses.Service;
 import com.example.courses.DTO.MarkCreateRequestDTO;
-import com.example.courses.DTO.MarkResponseDTO;
-import com.example.courses.Entity.Courses;
+import com.example.courses.Entity.Course;
 import com.example.courses.Entity.Mark;
 import com.example.courses.Helper.Constants;
 import com.example.courses.Repository.CoursesRepository;
@@ -27,7 +26,7 @@ public class MarkService {
         Mark mark = MarkCreateRequestDTO.covertToMark(request);
         mark.setCreateDate(new Date());
         mark.setIsActive(Boolean.TRUE);
-        Courses courses = coursesRepository.getCoursesById(request.getCourseId());
+        Course courses = coursesRepository.getCoursesById(request.getCourseId());
         if (courses != null) {
             mark.setCourse(courses);
         } else {
