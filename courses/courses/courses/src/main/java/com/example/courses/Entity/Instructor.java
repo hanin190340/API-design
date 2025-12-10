@@ -1,10 +1,7 @@
 package com.example.courses.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -14,6 +11,7 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @Table
+@ToString(exclude = "course") // prevents recursion
 public class Instructor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,11 +21,12 @@ public class Instructor {
     private Date CreateDate;
     private Date UpdateDate;
     private Boolean isActive;
-    @OneToOne
-    @JoinColumn(name = "course_id")
-    private Course courses;
+
+
+    @OneToOne(mappedBy = "instructor")
+    private Course course;
+
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "department_id")
     Department department;
 
 }

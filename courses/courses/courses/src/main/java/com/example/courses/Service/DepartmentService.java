@@ -3,6 +3,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.example.courses.DTO.DepartmentCreateRequestDTO;
+import com.example.courses.DTO.DepartmentSummaryDTO;
 import com.example.courses.Entity.Department;
 import com.example.courses.Repository.DepartmentRepository;
 
@@ -14,15 +15,21 @@ public class DepartmentService {
     @Autowired
     DepartmentRepository departmentRepository;
 
-    public List<Department> getAllDepartments() {
-        return departmentRepository.findAll();
+    public List<DepartmentSummaryDTO> getAllDepartments() {
+        List<Department> departments = departmentRepository.findAllActiveDepartments();
+        List<DepartmentSummaryDTO> departmentDTOs = new java.util.ArrayList<>();
+        for (Department dept : departments) {
+            departmentDTOs.add(DepartmentSummaryDTO.convertToDTO(dept));
+        }
+        return departmentDTOs;
     }
 
-    public Department saveDepartment(DepartmentCreateRequestDTO request)  {
+    public DepartmentSummaryDTO saveDepartment(DepartmentCreateRequestDTO request)  {
         Department department = DepartmentCreateRequestDTO.covertToDepartment(request);
         department.setIsActive(Boolean.TRUE);
         department.setCreateDate(new Date());
-        return departmentRepository.save(department);
+        Department savedDepartment = departmentRepository.save(department);
+        return DepartmentSummaryDTO.convertToDTO(savedDepartment);
     }
 
     public List<Department> getAllActiveDepartments() {

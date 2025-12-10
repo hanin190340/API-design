@@ -1,8 +1,12 @@
 package com.example.courses.Controller;
 
+import com.example.courses.DTO.DepartmentCreateRequestDTO;
+import com.example.courses.DTO.DepartmentSummaryDTO;
 import com.example.courses.Entity.Department;
 import com.example.courses.Service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,10 +18,10 @@ public class DepartmentController {
     DepartmentService departmentService;
 
     @PostMapping("/createDepartment")
-    public Department createDepartment(@RequestBody Department requestObj) {
-        Department department = departmentService.saveDepartment(requestObj);
-        return department;
-
+    public ResponseEntity< DepartmentSummaryDTO> createDepartment(@RequestBody DepartmentCreateRequestDTO requestObj)throws Exception {
+       DepartmentCreateRequestDTO.validateDepartment(requestObj);
+        DepartmentSummaryDTO department= departmentService.saveDepartment(requestObj);
+        return ResponseEntity.status(HttpStatus.CREATED).body(department);
     }
 
     @GetMapping("/getDepartmentById/{id}")
@@ -27,7 +31,7 @@ public class DepartmentController {
 
 
     @GetMapping("/getAllDepartments")
-    public List<Department> getAllDepartments() {
+    public List<DepartmentSummaryDTO> getAllDepartments() {
         return departmentService.getAllDepartments();
     }
 

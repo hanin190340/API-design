@@ -1,9 +1,11 @@
 package com.example.courses.Controller;
 
 import com.example.courses.DTO.CourseCreateRequestDTO;
+import com.example.courses.DTO.CourseResponseDTO;
 import com.example.courses.Entity.Course;
 import com.example.courses.Service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,22 +17,16 @@ import java.util.List;
 public class HelloController {
     @Autowired
     CourseService coursesService;
-//public ResponseEntity<CourseResponseDTO> createCourse(@RequestBody CourseCreateRequested requestObj) throws Exception{
-//    CourseCreateRequested.validateCourseCreateRequested(requestObj);
-//    CourseResponseDTO createdCourse = courseService.saveCourse(requestObj);
-//    return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
-//}
     @PostMapping("/create")
-    public ResponseEntity<CourseCreateRequestDTO> createCourses(@RequestBody CourseC requestObj) {
-        Course courses = coursesService.saveCourse(requestObj);
-        CourseResponseDTO
-        return courses;
-
+    public ResponseEntity<CourseResponseDTO> createCourses(@RequestBody CourseCreateRequestDTO requestObj)throws Exception {
+        CourseCreateRequestDTO.validCreateCourseRequest(requestObj);
+        CourseResponseDTO createdCourse = coursesService.saveCourse(requestObj);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
     }
 
     @GetMapping("/getAll")
-    public List<Course> getAllCourses() {
-        List<Course> responseList = coursesService.getAllCourses();
+    public List<CourseResponseDTO> getAllCourses() {
+        List<CourseResponseDTO> responseList = coursesService.getAllCourses();
         System.out.println(responseList);
         return responseList;
     }

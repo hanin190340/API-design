@@ -14,4 +14,6 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
     List<Mark>getMarkByIds(List<String> marks);
     @Query("SELECT m FROM Mark m WHERE m.isActive = true AND m.id =:markId")
     Mark getMarkById(Integer markId);
+    @Query("SELECT m FROM Mark m WHERE m.isActive = true")
+    List<Mark> findAllActiveMarks();
 }

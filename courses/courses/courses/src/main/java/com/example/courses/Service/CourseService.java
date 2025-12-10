@@ -1,6 +1,7 @@
 package com.example.courses.Service;
 
 import com.example.courses.DTO.CourseCreateRequestDTO;
+import com.example.courses.DTO.CourseResponseDTO;
 import com.example.courses.Entity.Course;
 import com.example.courses.Entity.Instructor;
 import com.example.courses.Entity.Mark;
@@ -13,6 +14,7 @@ import com.example.courses.Repository.MarkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,28 +29,43 @@ public class CourseService {
     @Autowired
     MarkRepository markRepository;
 
-    public List<Course> getAllCourses() {
-        return coursesRepository.findAll();
+    public List<CourseResponseDTO> getAllCourses() {
+        List <Course> courses = coursesRepository.findAllActiveCourses();
+        List<CourseResponseDTO> courseResponseDTOS = new ArrayList<>();
+        for (Course course : courses) {
+            courseResponseDTOS.add(CourseResponseDTO.convertToDto(course));
+        }
+        return courseResponseDTOS;
+
     }
 
-    public Course saveCourse(CourseCreateRequestDTO request) throws Exception {
+    public CourseResponseDTO saveCourse(CourseCreateRequestDTO request) throws Exception {
+        // Convert DTO → Entity
         Course course = CourseCreateRequestDTO.covertToCourses(request);
         course.setCreateDate(new Date());
         course.setIsActive(Boolean.TRUE);
+
+        // Validate Instructor
         Instructor instructor = instructorRepository.getInstructorById(request.getInstructorId());
         if (HelperUtils.isNotNull(instructor)) {
             course.setInstructor(instructor);
         } else {
             throw new Exception(Constants.BAD_INSTRUCTOR);
         }
+
+        // Validate Marks
         List<Mark> mark = markRepository.getMarkByIds(request.getMarks());
         if (HelperUtils.isListNotEmpty(mark)) {
             course.setMarks(mark);
         } else {
             throw new Exception(Constants.BAD_MARK);
         }
-        return coursesRepository.save(course);
-    }
+        Course savedCourse = coursesRepository.save(course);
+
+        // Convert Course to CourseResponseDTO
+        return CourseResponseDTO.convertToDto(savedCourse); }
+
+
 
     public Course updateCourse(Course courses) throws Exception {
         Course course = coursesRepository.findById(courses.getId()).get();
@@ -64,7 +81,6 @@ public class CourseService {
 
     public void deleteCourse(Integer id) throws Exception {
         Course existingCourse = coursesRepository.findById(id).get();
-        System.out.println(existingCourse.getIsActive());
         if (existingCourse != null && existingCourse.getIsActive()) {
             existingCourse.setUpdatedDate(new Date());
             existingCourse.setIsActive(false);

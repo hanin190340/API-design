@@ -30,6 +30,14 @@ public class CourseCreateRequestDTO {
         courses.setLanguage(request.getLanguage());
         return courses;
     }
+    public static CourseCreateRequestDTO convertToDto(Course course) {
+        return CourseCreateRequestDTO.builder()
+                .name(course.getName())
+                .language(course.getLanguage())
+                // instructorId, departmentId, marks are NOT in Course entity
+                .build();
+    }
+
 
     public static void validCreateCourseRequest(CourseCreateRequestDTO request) throws Exception {
         if (HelperUtils.isNull(request.getName()) || request.getName().isBlank() || request.getName().isEmpty()) {

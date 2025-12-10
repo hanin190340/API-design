@@ -1,11 +1,9 @@
 package com.example.courses.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,20 +13,23 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Table
+@ToString(exclude = "instructor") // if Course has a back-reference
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Integer id;
-    String name;
-    String language;
-    Date UpdatedDate;
-    Date createDate;
-    Boolean isActive;
+    private Integer id;
+    private String name;
+    private String language;
+    private Date UpdatedDate;
+    private Date createDate;
+    private Boolean isActive;
 
-    @OneToOne(mappedBy = "course", cascade = CascadeType.ALL)
-    Instructor instructor;
+    @OneToOne
+    @JoinColumn(name = "instructor_id") // foreign key in Course table
+    private Instructor instructor;
+
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<Mark> marks;
+    private List<Mark> marks = new ArrayList<>();
 
 
 }

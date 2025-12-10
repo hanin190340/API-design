@@ -12,4 +12,8 @@ public class Constants {
     public final static String BAD_COURSE = "COURSE NOT VALID";
     public final static String BAD_INSTRUCTOR = "INSTRUCTOR NOT VALID";
     public final static String BAD_MARK = "MARK NOT VALID";
+    public final static String BAD_STUDENT = "STUDENT NOT VALID";
+    public final static String BAD_EMAIL = "EMAIL NOT VALID";
+    public final static String BAD_PHONE_NUMBER = "PHONE NUMBER  NOT VALID";
+    public  final static String BAD_ADDRESS = "ADDRESS NOT VALID";
 }

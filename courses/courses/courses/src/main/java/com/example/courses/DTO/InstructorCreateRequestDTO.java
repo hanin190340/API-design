@@ -29,14 +29,6 @@ public class InstructorCreateRequestDTO {
         return instructor;
     }
 
-    /*  public static InstructorSummaryDTO convertToInstructorSummaryDTO(Instructor instructor) {
-          return InstructorSummaryDTO.builder()
-                  .id(instructor.getId())
-                  .Name(instructor.getName())
-                  .subject(instructor.getSubject())
-                  .build();
-      }
-  //*/
     public static void validateInstructor(InstructorCreateRequestDTO request) throws Exception {
 
         if (HelperUtils.isBlank(request.getName()) || HelperUtils.isNull(request.getName()) || request.getName().isEmpty()) {

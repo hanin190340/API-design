@@ -17,14 +17,15 @@ import java.util.Date;
 public class Mark {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Integer id;
-    Integer markObtained;
-    String studentName;
-    Double score;
-    String grade;
-    Date CreateDate;
-    Date UpdateDate;
-    Boolean isActive;
+    private Integer id;
+    private Integer markObtained;
+    private String studentName;
+    private Double score;
+    private String grade;
+    private Date CreateDate;
+    private Date UpdateDate;
+    private Boolean isActive;
+
     @ManyToOne(cascade = CascadeType.ALL)
     private Course course;
 }

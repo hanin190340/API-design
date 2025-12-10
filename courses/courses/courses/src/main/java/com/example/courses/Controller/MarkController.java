@@ -1,10 +1,12 @@
 package com.example.courses.Controller;
-///
+
 import com.example.courses.DTO.MarkCreateRequestDTO;
 import com.example.courses.DTO.MarkResponseDTO;
 import com.example.courses.Entity.Mark;
 import com.example.courses.Service.MarkService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,27 +17,25 @@ public class MarkController {
     MarkService markService;
 
     @PostMapping("/createMark")
-    public MarkResponseDTO createMark(@RequestBody MarkCreateRequestDTO requestObj) {
-        Mark mark = markService.saveMark(requestObj);
-        return mark;
+    public ResponseEntity< MarkResponseDTO > createMark(@RequestBody MarkCreateRequestDTO requestObj) throws Exception {
+       MarkCreateRequestDTO.validCreateMarkRequest(requestObj);
+        MarkResponseDTO mark = markService.saveMark(requestObj);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mark);
 
     }
 
     @GetMapping("/getAllMark")
     public List<MarkResponseDTO> getAllMark() {
-        List<MarkResponseDTO> responseList = markService.getAllMark();
-        System.out.println(responseList);
-        return responseList;
+        return  markService.getAllMark();
     }
-
     @GetMapping("/getMarkById")
-    public MarkResponseDTO getMark(@RequestParam int id) throws Exception {
+    public Mark getMark(@RequestParam int id) throws Exception {
 
         return markService.getMarkById(id);
     }
 
     @PutMapping("/UpdateMark")
-    public MarkResponseDTO updateMark(@RequestBody MarkCreateRequestDTO updateObjFromUser) throws Exception {
+    public Mark updateMark(@RequestBody Mark updateObjFromUser) throws Exception {
 
         return markService.updateMark(updateObjFromUser);
     }
@@ -52,6 +52,6 @@ public class MarkController {
 
 
 
-///
 
-}
+
+

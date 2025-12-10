@@ -7,24 +7,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
-@Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table
-public class Department {
+@Entity
+@Table(name = "phone_numbers")
+public class PhoneNumber {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+    private String number;
+    private String countryCode;
+    private Boolean isLandLine;
     private Boolean isActive;
-    private String name;
-    private Date UpdatedDate;
-    private Date createDate;
+    private Date createdDate;
+    private Date updatedDate;
 
+    @ManyToOne
+    @JoinColumn(name = "student")
+    private Student student;
 
 }
-

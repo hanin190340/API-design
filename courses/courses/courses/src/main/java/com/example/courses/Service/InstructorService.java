@@ -3,6 +3,7 @@ package com.example.courses.Service;
 import java.util.List;
 
 import com.example.courses.DTO.InstructorCreateRequestDTO;
+import com.example.courses.DTO.InstructorSummaryDTO;
 import com.example.courses.Entity.Course;
 import com.example.courses.Entity.Department;
 import com.example.courses.Entity.Instructor;
@@ -16,18 +17,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 @Service
-public class InstuctorService {
+public class InstructorService {
     @Autowired
     InstructorRepository instructorRepository;
 @Autowired
     DepartmentRepository departmentRepository;
 @Autowired
     CoursesRepository coursesRepository;
-    public List<Instructor> getAllInstructors() {
-        return instructorRepository.findAll();
+    public List<InstructorSummaryDTO> getAllInstructors() {
+        List<Instructor> instructors = instructorRepository.findAllActiveInstructors();
+        List <InstructorSummaryDTO> instructorDTOs = new java.util.ArrayList<>();
+        for (Instructor instructor : instructors) {
+            instructorDTOs.add(InstructorSummaryDTO.convertToDto(instructor));
+        }
+        return instructorDTOs;
     }
 
-    public Instructor saveInstructor(InstructorCreateRequestDTO request)throws Exception {
+    public InstructorSummaryDTO saveInstructor(InstructorCreateRequestDTO request)throws Exception {
         Instructor instructor = InstructorCreateRequestDTO.covertToInstructor(request);
         instructor.setCreateDate(new Date());
         instructor.setIsActive(Boolean.TRUE);
@@ -37,12 +43,14 @@ public class InstuctorService {
         } else {
             throw new Exception(Constants.BAD_DEPARTMENT);}
         Course courses = coursesRepository.getCoursesById(request.getCourseId());
-        if (HelperUtils.isNotNull(courses)) {
-            instructor.setCourses(courses);
-        } else {
-            throw new Exception(Constants.BAD_COURSE);
-        }
-        return instructorRepository.save(instructor);
+      if (HelperUtils.isNotNull(courses)) {
+          instructor.setCourse(courses);
+      } else {
+          throw new Exception(Constants.BAD_COURSE);
+    }
+
+        Instructor savedInstructor = instructorRepository.save(instructor);
+        return InstructorSummaryDTO.convertToDto(savedInstructor);
     }
 
     public List<Instructor> getAllActiveInstructors() {

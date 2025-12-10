@@ -1,8 +1,12 @@
 package com.example.courses.Controller;
 
+import com.example.courses.DTO.InstructorCreateRequestDTO;
+import com.example.courses.DTO.InstructorSummaryDTO;
 import com.example.courses.Entity.Instructor;
-import com.example.courses.Service.InstuctorService;
+import com.example.courses.Service.InstructorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,20 +15,20 @@ import java.util.List;
 @CrossOrigin(origins = "*")
     public class InstructorController {
         @Autowired
-        InstuctorService instructorService;
+        InstructorService instructorService;
 
         @PostMapping("/createInstructor")
-        public Instructor createInstructor(@RequestBody Instructor requestObj) {
-            Instructor instructor = instructorService.saveInstructor(requestObj);
-            return instructor;
-
+        public ResponseEntity< InstructorSummaryDTO> createInstructor(@RequestBody InstructorCreateRequestDTO requestObj)throws Exception {
+            InstructorCreateRequestDTO.validateInstructor(requestObj);
+            InstructorSummaryDTO instructor= instructorService.saveInstructor(requestObj);
+            return ResponseEntity.status(HttpStatus.CREATED).body(instructor);
         }
         @GetMapping("/getInstructorById")
         public Instructor getInstructor(@RequestParam int id) throws Exception {
             return instructorService.getInstructorById(id);
     }
 @GetMapping("/getAllInstructors")
-        public List<Instructor> getAllInstructors() {
+        public List<InstructorSummaryDTO> getAllInstructors() {
             return instructorService.getAllInstructors();
         }
         @PutMapping("/updateInstructor")

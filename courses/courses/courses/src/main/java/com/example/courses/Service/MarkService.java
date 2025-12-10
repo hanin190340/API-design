@@ -1,5 +1,6 @@
 package com.example.courses.Service;
 import com.example.courses.DTO.MarkCreateRequestDTO;
+import com.example.courses.DTO.MarkResponseDTO;
 import com.example.courses.Entity.Course;
 import com.example.courses.Entity.Mark;
 import com.example.courses.Helper.Constants;
@@ -8,6 +9,7 @@ import com.example.courses.Repository.MarkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,11 +20,16 @@ public class MarkService {
     @Autowired
     private CoursesRepository coursesRepository;
 
-    public List<Mark> getAllMark() {
-        return markRepository.findAll();
+    public List<MarkResponseDTO> getAllMark() {
+        List<Mark> marks = markRepository.findAllActiveMarks();
+        List <MarkResponseDTO> markResponseDTOS = new ArrayList<>();
+        for (Mark mark : marks) {
+            markResponseDTOS.add(MarkResponseDTO.convertToDto(mark));
+        }
+        return markResponseDTOS;
     }
 
-    public Mark saveMark(MarkCreateRequestDTO request) throws Exception{
+    public MarkResponseDTO saveMark(MarkCreateRequestDTO request) throws Exception{
         Mark mark = MarkCreateRequestDTO.covertToMark(request);
         mark.setCreateDate(new Date());
         mark.setIsActive(Boolean.TRUE);
@@ -32,7 +39,8 @@ public class MarkService {
         } else {
             throw new Exception(Constants.BAD_COURSE);
         }
-        return markRepository.save(mark);
+        Mark savedMark = markRepository.save(mark);
+        return MarkResponseDTO.convertToDto(savedMark);
     }
 
     public Mark updateMark(Mark mark) throws Exception {
