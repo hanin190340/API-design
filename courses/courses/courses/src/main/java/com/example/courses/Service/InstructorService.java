@@ -2,8 +2,8 @@ package com.example.courses.Service;
 
 import java.util.List;
 
-import com.example.courses.DTO.InstructorCreateRequestDTO;
-import com.example.courses.DTO.InstructorSummaryDTO;
+import com.example.courses.RequestObjects.InstructorCreateRequestDTO;
+import com.example.courses.ResponseObjects.InstructorSummaryDTO;
 import com.example.courses.Entity.Course;
 import com.example.courses.Entity.Department;
 import com.example.courses.Entity.Instructor;
@@ -93,10 +93,10 @@ public class InstructorService {
             throw new Exception("Instructor not found");
     }
 }
-public Instructor getInstructorById(Integer id) throws Exception {
+public InstructorSummaryDTO getInstructorById(Integer id) throws Exception {
         Instructor existingInstructor = instructorRepository.findById(id).get();
         if (existingInstructor != null && existingInstructor.getIsActive()) {
-            return existingInstructor;
+            return InstructorSummaryDTO.convertToDto(existingInstructor);
         } else {
             throw new Exception("Instructor not found");
         }

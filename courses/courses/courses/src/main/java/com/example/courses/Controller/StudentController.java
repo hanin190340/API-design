@@ -1,7 +1,8 @@
 package com.example.courses.Controller;
 
-import com.example.courses.DTO.StudentCreateRequestDTO;
-import com.example.courses.DTO.StudentResponseDTO;
+import com.example.courses.RequestObjects.StudentCreateRequestDTO;
+import com.example.courses.RequestObjects.StudentRequestDTO;
+import com.example.courses.ResponseObjects.StudentResponseDTO;
 import com.example.courses.Entity.Student;
 import com.example.courses.Service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(student);
     }
     @GetMapping("/getStudentsById")
-    public Student getStudent(@RequestParam int id) throws Exception {
+    public StudentResponseDTO getStudent(@RequestParam int id) throws Exception {
         return studentService.getStudentById(id);
     }
 @GetMapping("/getAllStudents")
@@ -33,7 +34,7 @@ public class StudentController {
         return studentService.getAllStudents();
     }
 @PutMapping("/updateStudents")
-    public Student updateStudent(@RequestBody Student updateObjFromUser) throws Exception {
+    public StudentResponseDTO updateStudent(@RequestBody StudentRequestDTO updateObjFromUser) throws Exception {
         return studentService.updateStudent(updateObjFromUser);
     }
 @DeleteMapping("/deleteStudents")
@@ -41,5 +42,5 @@ public class StudentController {
         studentService.deleteStudent(id);
         return "Student deleted successfully";
     }
-//DELETE
+
 }

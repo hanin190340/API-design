@@ -2,8 +2,9 @@ package com.example.courses.Service;
 import java.util.Date;
 import java.util.List;
 
-import com.example.courses.DTO.DepartmentCreateRequestDTO;
-import com.example.courses.DTO.DepartmentSummaryDTO;
+import com.example.courses.RequestObjects.DepartmentCreateRequestDTO;
+import com.example.courses.RequestObjects.DepartmentRequestDTO;
+import com.example.courses.ResponseObjects.DepartmentSummaryDTO;
 import com.example.courses.Entity.Department;
 import com.example.courses.Repository.DepartmentRepository;
 
@@ -44,22 +45,22 @@ public class DepartmentService {
         return activeDepartments;
     }
 
-    public Department updateDepartment(Department department) throws Exception {
-        Department existingDepartment = departmentRepository.findById(department.getId()).get();
+    public DepartmentSummaryDTO updateDepartment(DepartmentRequestDTO request) throws Exception {
+
+        Department existingDepartment = departmentRepository.findById(request.getId())
+                .orElseThrow(() -> new Exception("Department not found"));
+
         if (!Boolean.TRUE.equals(existingDepartment.getIsActive())) {
             throw new Exception("Department is not active");
         }
+        existingDepartment.setName(request.getName());
+        existingDepartment.setUpdatedDate(new Date());
 
-        if (existingDepartment.getIsActive()) {
-            department.setUpdatedDate(new Date());
-            department.setCreateDate(existingDepartment.getCreateDate());
-            department.setIsActive(existingDepartment.getIsActive());
+        Department savedDepartment = departmentRepository.save(existingDepartment);
 
-            return departmentRepository.save(department);
-        } else {
-            throw new Exception("Department not found");
-        }
+        return DepartmentSummaryDTO.convertToDTO(savedDepartment);
     }
+
 
     public void deleteDepartment(Integer id) throws Exception {
         Department existingDepartment = departmentRepository.findById(id).get();
@@ -74,8 +75,12 @@ public class DepartmentService {
 
     }
 
-    public Department getDepartmentById(Integer id) throws Exception {
-        return  departmentRepository.findById(id).get();
+    public DepartmentSummaryDTO getDepartmentById(Integer id) throws Exception {
+        Department existingDepartment = departmentRepository.getDepartmentById(id);
+        if (existingDepartment == null || !existingDepartment.getIsActive()) {
+            throw new Exception("Department not found");
+        }
+        return DepartmentSummaryDTO.convertToDTO(existingDepartment);
 
     }
 

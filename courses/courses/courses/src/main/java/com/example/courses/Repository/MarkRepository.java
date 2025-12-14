@@ -1,6 +1,5 @@
 package com.example.courses.Repository;
 
-import com.example.courses.DTO.MarkCreateRequestDTO;
 import com.example.courses.Entity.Mark;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +15,6 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
     Mark getMarkById(Integer markId);
     @Query("SELECT m FROM Mark m WHERE m.isActive = true")
     List<Mark> findAllActiveMarks();
+
+
 }

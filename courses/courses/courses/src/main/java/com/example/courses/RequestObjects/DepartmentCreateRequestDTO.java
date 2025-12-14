@@ -1,5 +1,4 @@
-package com.example.courses.DTO;
-
+package com.example.courses.RequestObjects;
 import com.example.courses.Entity.Department;
 import com.example.courses.Helper.Constants;
 import com.example.courses.Helper.HelperUtils;
@@ -8,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 @Builder

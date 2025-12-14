@@ -1,7 +1,8 @@
 package com.example.courses.Controller;
 
-import com.example.courses.DTO.CourseCreateRequestDTO;
-import com.example.courses.DTO.CourseResponseDTO;
+import com.example.courses.RequestObjects.CourseCreateRequestDTO;
+import com.example.courses.RequestObjects.CourseRequestDTO;
+import com.example.courses.ResponseObjects.CourseResponseDTO;
 import com.example.courses.Entity.Course;
 import com.example.courses.Service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +33,13 @@ public class HelloController {
     }
 
     @GetMapping("/getById")
-    public Course getCourses(@RequestParam int id) throws Exception {
+    public CourseResponseDTO getCourses(@RequestParam int id) throws Exception {
 
         return coursesService.getCourseById(id);
     }
 
     @PutMapping("/Update")
-    public Course updateCourse(@RequestBody Course updateObjFromUser) throws Exception {
+    public CourseResponseDTO updateCourse(@RequestBody CourseRequestDTO updateObjFromUser) throws Exception {
 
         return coursesService.updateCourse(updateObjFromUser);
     }

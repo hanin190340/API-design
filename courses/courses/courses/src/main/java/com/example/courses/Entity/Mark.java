@@ -20,14 +20,18 @@ public class Mark {
     private Integer id;
     private Integer markObtained;
     private String studentName;
-    private Double score;
+    private Integer score;
     private String grade;
     private Date CreateDate;
     private Date UpdateDate;
     private Boolean isActive;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    //@ManyToOne(cascade = CascadeType.ALL)
+    //private Course course;
+    @ManyToOne
+    @JoinColumn(name = "course_id") // foreign key in Mark table
     private Course course;
+
 }
 
 

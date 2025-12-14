@@ -1,4 +1,4 @@
-package com.example.courses.DTO;
+package com.example.courses.ResponseObjects;
 
 import com.example.courses.Entity.Mark;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class MarkResponseDTO {
     private Integer id;
     private String studentName;
-    private Double score;
+    private Integer score;
     private Integer courseId; // link to the course
     public static MarkResponseDTO convertToDto(Mark mark) {
         return MarkResponseDTO.builder()

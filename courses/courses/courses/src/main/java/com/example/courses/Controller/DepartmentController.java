@@ -1,7 +1,8 @@
 package com.example.courses.Controller;
 
-import com.example.courses.DTO.DepartmentCreateRequestDTO;
-import com.example.courses.DTO.DepartmentSummaryDTO;
+import com.example.courses.RequestObjects.DepartmentCreateRequestDTO;
+import com.example.courses.RequestObjects.DepartmentRequestDTO;
+import com.example.courses.ResponseObjects.DepartmentSummaryDTO;
 import com.example.courses.Entity.Department;
 import com.example.courses.Service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/getDepartmentById/{id}")
-    public Department getDepartment(@PathVariable int id) throws Exception {
+    public DepartmentSummaryDTO getDepartment(@PathVariable int id) throws Exception {
         return departmentService.getDepartmentById(id);
     }
 
@@ -36,7 +37,7 @@ public class DepartmentController {
     }
 
     @PutMapping("/updateDepartment")
-    public Department updateDepartment(@RequestBody Department updateObjFromUser) throws Exception {
+    public DepartmentSummaryDTO updateDepartment(@RequestBody DepartmentRequestDTO updateObjFromUser) throws Exception {
         return departmentService.updateDepartment(updateObjFromUser);
 
     }

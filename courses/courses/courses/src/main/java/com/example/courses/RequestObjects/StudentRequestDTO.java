@@ -1,4 +1,5 @@
-package com.example.courses.DTO;
+package com.example.courses.RequestObjects;
+
 
 import com.example.courses.Entity.Student;
 import com.example.courses.Helper.Constants;
@@ -18,8 +19,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentCreateRequestDTO {
-
+public class StudentRequestDTO {
+private Integer id;
     @NotEmpty(message = "First name is required")
     private String firstName;
 
@@ -36,63 +37,60 @@ public class StudentCreateRequestDTO {
     @NotEmpty(message = "Gender is required")
     private String gender;
 
-    private Boolean isActive;
-
     private List<Integer> phoneNumberIds;
 
     private Integer addressId;
 
-    // =============================
     // Convert DTO → Entity
-    // =============================
-    public static Student convertToStudent(StudentCreateRequestDTO request) {
+    public static Student convertToStudent(StudentRequestDTO request) {
         Student student = new Student();
 
         student.setFirstName(request.getFirstName());
         student.setLastName(request.getLastName());
         student.setEmail(request.getEmail());
+        student.setId(request.getId());
         student.setDateOfBirth(request.getDateOfBirth());
         student.setGender(request.getGender());
         return student;
     }
     // Convert Entity → DTO
-    // =============================
-    public static StudentCreateRequestDTO convertToDto(Student student) {
-        return StudentCreateRequestDTO.builder()
+    public static StudentRequestDTO convertToDto(Student student) {
+        return StudentRequestDTO.builder()
                 .firstName(student.getFirstName())
                 .lastName(student.getLastName())
                 .email(student.getEmail())
                 .dateOfBirth(student.getDateOfBirth())
                 .gender(student.getGender())
-                .isActive(student.getIsActive())
+                .id(student.getId())
                 .addressId(student.getAddress() != null ? student.getAddress().getId() : null)
                 .build();
     }
-
-    // =============================
     // Validation
-    // =============================
-    public static void validCreateStudentRequest(StudentCreateRequestDTO request) throws Exception {
+    public static void validCreateStudentRequest(StudentRequestDTO request) throws Exception {
 
         if (HelperUtils.isNull(request.getFirstName()) || request.getFirstName().isBlank()) {
             throw new Exception(Constants.BAD_REQUEST + ": First name is required");
         }
 
-        if (HelperUtils.isNull(request.getLastName()) || request.getLastName().isBlank()) {
+      else   if (HelperUtils.isNull(request.getLastName()) || request.getLastName().isBlank()) {
             throw new Exception(Constants.BAD_REQUEST + ": Last name is required");
         }
 
-        if (HelperUtils.isNull(request.getEmail()) || request.getEmail().isBlank()) {
+       else if (HelperUtils.isNull(request.getEmail()) || request.getEmail().isBlank()) {
             throw new Exception(Constants.BAD_REQUEST + ": Email is required");
         }
 
-        if (HelperUtils.isNull(request.getDateOfBirth())) {
+      else   if (HelperUtils.isNull(request.getDateOfBirth())) {
             throw new Exception(Constants.BAD_REQUEST + ": Date of birth is required");
         }
 
-        if (HelperUtils.isNull(request.getGender()) || request.getGender().isBlank()) {
+       else if (HelperUtils.isNull(request.getGender()) || request.getGender().isBlank()) {
             throw new Exception(Constants.BAD_REQUEST + ": Gender is required");
         }
+       else if (HelperUtils.isNull(request.getId()) || request.getId() <= 0) {
+            throw new Exception(Constants.BAD_REQUEST + ": ID is required and must be > 0");
+        }
+
     }
 
 }

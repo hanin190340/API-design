@@ -1,5 +1,4 @@
-package com.example.courses.DTO;
-
+package com.example.courses.RequestObjects;
 import com.example.courses.Entity.Mark;
 import com.example.courses.Helper.Constants;
 import com.example.courses.Helper.HelperUtils;
@@ -14,12 +13,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class MarkCreateRequestDTO {
+public class MarkRequestDTO {
+    private Integer id;
     @NotEmpty(message = "Student name is required")
     private String studentName;
 
     @NotNull(message = "Score is required")
-    private Double score;
+    private Integer score;
 
     @NotEmpty(message = "Grade is required")
     private String grade;
@@ -27,15 +27,16 @@ public class MarkCreateRequestDTO {
     @NotNull(message = "Course ID is required")
     private Integer courseId; // link to the course
 
-    public static Mark covertToMark(MarkCreateRequestDTO request) {
+    public static Mark covertToMark(MarkRequestDTO request) {
         Mark mark = new Mark();
         mark.setStudentName(request.getStudentName());
         mark.setScore(request.getScore());
         mark.setGrade(request.getGrade());
+        mark.setId(request.getId());
         return mark;
     }
 
-    public static void validCreateMarkRequest(MarkCreateRequestDTO request) throws Exception {
+    public static void validCreateMarkRequest(MarkRequestDTO request) throws Exception {
 
         if (HelperUtils.isBlank(request.getStudentName()) || HelperUtils.isNull(request.getStudentName()) || request.getStudentName().isEmpty()) {
             throw new Exception(Constants.BAD_NAME_VALID);
@@ -46,5 +47,12 @@ public class MarkCreateRequestDTO {
         } else if (HelperUtils.isNull(request.getCourseId()) || request.getCourseId() <= 0) {
             throw new Exception(Constants.BAD_REQUEST);
         }
+        else if (HelperUtils.isNull(request.getId())|| request.getId() <= 0) {
+            throw new Exception(Constants.BAD_REQUEST);
+        }
+        else if (HelperUtils.isNull(request.getId())|| request.getId() < 0) {
+            throw new Exception(Constants.BAD_REQUEST);
+        }
     }
 }
+

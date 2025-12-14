@@ -1,7 +1,8 @@
 package com.example.courses.Service;
 
-import com.example.courses.DTO.AddressCreateRequestDTO;
-import com.example.courses.DTO.AddressResponseDTO;
+import com.example.courses.RequestObjects.AddressCreateRequestDTO;
+import com.example.courses.RequestObjects.AddressRequestDTO;
+import com.example.courses.ResponseObjects.AddressResponseDTO;
 import com.example.courses.Entity.Address;
 import com.example.courses.Entity.Student;
 import com.example.courses.Helper.HelperUtils;
@@ -33,12 +34,13 @@ public class AddressService {
         Address savedAddress = addressRepository.save(address);
         return AddressResponseDTO.convertToDto(savedAddress);
     }
-    public Address updateAddress(Address address)throws Exception {
-        Address existingAddress = addressRepository.findById(address.getId()).get();
+    public AddressResponseDTO updateAddress(AddressRequestDTO address)throws Exception {
+        Address existingAddress = addressRepository.getAddressById(address.getId());
 
         if (existingAddress != null && existingAddress.getIsActive()) {
-            address.setUpdatedDate(new Date());
-            return addressRepository.save(address);
+            existingAddress =AddressRequestDTO.convertToAddress(address);
+            existingAddress.setUpdatedDate(new Date());
+            return AddressResponseDTO.convertToDto(addressRepository.save(existingAddress));
         } else {
             throw new Exception("Address not found");
 

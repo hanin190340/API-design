@@ -1,7 +1,5 @@
-package com.example.courses.DTO;
+package com.example.courses.ResponseObjects;
 
-import com.example.courses.Entity.Address;
-import com.example.courses.Entity.PhoneNumber;
 import com.example.courses.Entity.Student;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

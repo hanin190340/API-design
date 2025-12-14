@@ -1,7 +1,8 @@
 package com.example.courses.Controller;
 
-import com.example.courses.DTO.PhoneNumberCreateRequestDTO;
-import com.example.courses.DTO.PhoneNumberResponseDTO;
+import com.example.courses.RequestObjects.PhoneNumberCreateRequestDTO;
+import com.example.courses.RequestObjects.PhoneNumberRequestDTO;
+import com.example.courses.ResponseObjects.PhoneNumberResponseDTO;
 import com.example.courses.Entity.PhoneNumber;
 import com.example.courses.Service.PhoneNumberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class PhoneNumberController {
     PhoneNumberService phoneNumberService;
 
     @PutMapping("/UpdatePhoneNumber")
-    public PhoneNumber updatePhoneNumber(@RequestBody PhoneNumber updateObjFromUser ) throws Exception {
+    public PhoneNumberResponseDTO updatePhoneNumber(@RequestBody PhoneNumberRequestDTO updateObjFromUser ) throws Exception {
 
         return phoneNumberService.updatePhoneNumber(updateObjFromUser);
     }

@@ -1,5 +1,6 @@
 package com.example.courses.Entity;
 
+import com.example.courses.RequestObjects.MarkCreateRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,9 +28,10 @@ public class Course {
     @OneToOne
     @JoinColumn(name = "instructor_id") // foreign key in Course table
     private Instructor instructor;
-
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Mark> marks = new ArrayList<>();
+
+
 
 
 }

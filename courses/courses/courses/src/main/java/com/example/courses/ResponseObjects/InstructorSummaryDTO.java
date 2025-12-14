@@ -1,4 +1,4 @@
-package com.example.courses.DTO;
+package com.example.courses.ResponseObjects;
 
 import com.example.courses.Entity.Instructor;
 import lombok.AllArgsConstructor;

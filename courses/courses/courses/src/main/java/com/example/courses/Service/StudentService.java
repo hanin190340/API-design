@@ -1,7 +1,8 @@
 package com.example.courses.Service;
 
-import com.example.courses.DTO.StudentCreateRequestDTO;
-import com.example.courses.DTO.StudentResponseDTO;
+import com.example.courses.RequestObjects.StudentCreateRequestDTO;
+import com.example.courses.RequestObjects.StudentRequestDTO;
+import com.example.courses.ResponseObjects.StudentResponseDTO;
 import com.example.courses.Entity.Address;
 import com.example.courses.Entity.PhoneNumber;
 import com.example.courses.Entity.Student;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 @Service
 
@@ -47,10 +49,10 @@ public class StudentService {
 
     }
 
-    public Student getStudentById(Integer id) throws Exception{
+    public StudentResponseDTO getStudentById(Integer id) throws Exception{
         Student existingStudent = studentRepository.findById(id).get();
         if (existingStudent != null && existingStudent.getIsActive()) {
-            return existingStudent;
+            return StudentResponseDTO.convertToDto(existingStudent);
         } else {
             throw new Exception("Student not found");
         }
@@ -64,16 +66,38 @@ public class StudentService {
         }
         return studentDTOs;
     }
-    public Student updateStudent(Student student) throws  Exception {
-        Student existingStudent = studentRepository.findById(student.getId()).get();
-        if (existingStudent != null && existingStudent.getIsActive()) {
-            student.setUpdatedDate(new java.util.Date());
-            return studentRepository.save(student);
-        } else {
-            throw new Exception("Student not found");
+    public StudentResponseDTO updateStudent(StudentRequestDTO request) throws Exception {
 
+        Student existingStudent = studentRepository.findById(request.getId())
+                .orElseThrow(() -> new Exception("Student not found"));
+
+        if (!Boolean.TRUE.equals(existingStudent.getIsActive())) {
+            throw new Exception("Student is not active");
         }
+
+        existingStudent.setFirstName(request.getFirstName());
+        existingStudent.setLastName(request.getLastName());
+        existingStudent.setEmail(request.getEmail());
+        existingStudent.setDateOfBirth(request.getDateOfBirth());
+        existingStudent.setGender(request.getGender());
+        existingStudent.setUpdatedDate(new Date());
+
+        if (request.getAddressId() != null) {
+            Address address = addressRepository.findById(request.getAddressId())
+                    .orElseThrow(() -> new Exception("Address not found"));
+            existingStudent.setAddress(address);
+        }
+        if (request.getPhoneNumberIds() != null && !request.getPhoneNumberIds().isEmpty()) {
+            List<PhoneNumber> phoneNumbers =
+                    phoneNumberRepository.findAllById(request.getPhoneNumberIds());
+            existingStudent.setPhoneNumbers(phoneNumbers);
+        }
+
+        Student savedStudent = studentRepository.save(existingStudent);
+
+        return StudentResponseDTO.convertToDto(savedStudent);
     }
+
 
     public void deleteStudent(int id) throws Exception{
         Student existingStudent = studentRepository.findById(id).get();

@@ -1,6 +1,7 @@
 package com.example.courses.Service;
-import com.example.courses.DTO.MarkCreateRequestDTO;
-import com.example.courses.DTO.MarkResponseDTO;
+import com.example.courses.RequestObjects.MarkCreateRequestDTO;
+import com.example.courses.RequestObjects.MarkRequestDTO;
+import com.example.courses.ResponseObjects.MarkResponseDTO;
 import com.example.courses.Entity.Course;
 import com.example.courses.Entity.Mark;
 import com.example.courses.Helper.Constants;
@@ -43,17 +44,29 @@ public class MarkService {
         return MarkResponseDTO.convertToDto(savedMark);
     }
 
-    public Mark updateMark(Mark mark) throws Exception {
-        Mark existingCourses = markRepository.findById(mark.getId()).get();
+    public MarkResponseDTO updateMark(MarkRequestDTO request) throws Exception {
 
-        if (existingCourses != null && existingCourses.getIsActive()) {
-            mark.setUpdateDate(new Date());
-            return markRepository.save(mark);
-        } else {
-            throw new Exception("Course not found");
+        Mark existingMark = markRepository.findById(request.getId())
+                .orElseThrow(() -> new Exception("Mark not found"));
 
+        if (!Boolean.TRUE.equals(existingMark.getIsActive())) {
+            throw new Exception("Mark is not active");
         }
+
+        existingMark.setStudentName(request.getStudentName());
+        existingMark.setScore(request.getScore());
+        existingMark.setGrade(request.getGrade());
+        existingMark.setUpdateDate(new Date());
+        Course course = coursesRepository.findById(request.getCourseId())
+                .orElseThrow(() -> new Exception("Course not found"));
+
+        existingMark.setCourse(course);
+
+        Mark savedMark = markRepository.save(existingMark);
+
+        return MarkResponseDTO.convertToDto(savedMark);
     }
+
 
     public void deleteMark(Integer id) throws Exception {
         Mark existingCourse = markRepository.findById(id).get();

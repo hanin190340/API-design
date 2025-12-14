@@ -1,7 +1,8 @@
 package com.example.courses.Service;
 
-import com.example.courses.DTO.CourseCreateRequestDTO;
-import com.example.courses.DTO.CourseResponseDTO;
+import com.example.courses.RequestObjects.CourseCreateRequestDTO;
+import com.example.courses.RequestObjects.CourseRequestDTO;
+import com.example.courses.ResponseObjects.CourseResponseDTO;
 import com.example.courses.Entity.Course;
 import com.example.courses.Entity.Instructor;
 import com.example.courses.Entity.Mark;
@@ -65,19 +66,59 @@ public class CourseService {
         // Convert Course to CourseResponseDTO
         return CourseResponseDTO.convertToDto(savedCourse); }
 
+//    public AddressResponseDTO updateAddress(AddressRequestDTO address)throws Exception {
+//        Address existingAddress = addressRepository.getAddressById(address.getId());
+//
+//        if (existingAddress != null && existingAddress.getIsActive()) {
+//            existingAddress =AddressRequestDTO.convertToAddress(address);
+//            existingAddress.setUpdatedDate(new Date());
+//            return AddressResponseDTO.convertToDto(addressRepository.save(existingAddress));
+//        } else {
+//            throw new Exception("Address not found");
+//
+//        }
+//    }
 
 
-    public Course updateCourse(Course courses) throws Exception {
-        Course course = coursesRepository.findById(courses.getId()).get();
+    public CourseResponseDTO updateCourse(CourseRequestDTO request) throws Exception {
 
-        if (course != null && course.getIsActive()) {
-            courses.setUpdatedDate(new Date());
-            return coursesRepository.save(courses);
-        } else {
-            throw new Exception("Course not found");
+        Course existingCourse = coursesRepository.findById(request.getId())
+                .orElseThrow(() -> new Exception("Course not found"));
 
+        if (!existingCourse.getIsActive()) {
+            throw new Exception("Course is not active");
         }
+        existingCourse.setName(request.getName());
+        existingCourse.setLanguage(request.getLanguage());
+
+        // Instructor
+        Instructor instructor =
+                instructorRepository.getInstructorById(request.getInstructorId());
+        if (HelperUtils.isNull(instructor)) {
+            throw new Exception(Constants.BAD_INSTRUCTOR);
+        }
+        existingCourse.setInstructor(instructor);
+
+        // Mark
+        /*/Mark mark =
+                markRepository.getMarkById(request.getMarkId());
+        if (HelperUtils.isNull(mark)) {
+            throw new Exception(Constants.BAD_MARK);
+        }
+
+        List<Mark> marks = new ArrayList<>();
+        marks.add(mark);
+        existingCourse.setMarks(marks);
+        /*/
+
+        // Updated date
+        existingCourse.setUpdatedDate(new Date());
+
+        return CourseResponseDTO.convertToDto(
+                coursesRepository.save(existingCourse)
+        );
     }
+
 
     public void deleteCourse(Integer id) throws Exception {
         Course existingCourse = coursesRepository.findById(id).get();
@@ -91,10 +132,10 @@ public class CourseService {
     }
 
 
-    public Course getCourseById(Integer id) throws Exception {
+    public CourseResponseDTO getCourseById(Integer id) throws Exception {
         Course existingCourses = coursesRepository.findById(id).get();
         if (existingCourses != null && existingCourses.getIsActive()) {
-            return existingCourses;
+            return CourseResponseDTO.convertToDto(existingCourses);
         } else {
             throw new Exception("Course not found");
         }

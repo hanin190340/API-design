@@ -1,7 +1,7 @@
 package com.example.courses.Controller;
 
-import com.example.courses.DTO.InstructorCreateRequestDTO;
-import com.example.courses.DTO.InstructorSummaryDTO;
+import com.example.courses.RequestObjects.InstructorCreateRequestDTO;
+import com.example.courses.ResponseObjects.InstructorSummaryDTO;
 import com.example.courses.Entity.Instructor;
 import com.example.courses.Service.InstructorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.List;
             return ResponseEntity.status(HttpStatus.CREATED).body(instructor);
         }
         @GetMapping("/getInstructorById")
-        public Instructor getInstructor(@RequestParam int id) throws Exception {
+        public InstructorSummaryDTO getInstructor(@RequestParam int id) throws Exception {
             return instructorService.getInstructorById(id);
     }
 @GetMapping("/getAllInstructors")

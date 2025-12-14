@@ -1,7 +1,8 @@
 package com.example.courses.Controller;
 
-import com.example.courses.DTO.MarkCreateRequestDTO;
-import com.example.courses.DTO.MarkResponseDTO;
+import com.example.courses.RequestObjects.MarkCreateRequestDTO;
+import com.example.courses.RequestObjects.MarkRequestDTO;
+import com.example.courses.ResponseObjects.MarkResponseDTO;
 import com.example.courses.Entity.Mark;
 import com.example.courses.Service.MarkService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class MarkController {
     }
 
     @PutMapping("/UpdateMark")
-    public Mark updateMark(@RequestBody Mark updateObjFromUser) throws Exception {
+    public MarkResponseDTO updateMark(@RequestBody MarkRequestDTO updateObjFromUser) throws Exception {
 
         return markService.updateMark(updateObjFromUser);
     }

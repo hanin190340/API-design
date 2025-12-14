@@ -1,4 +1,4 @@
-package com.example.courses.DTO;
+package com.example.courses.RequestObjects;
 
 import com.example.courses.Entity.Address;
 import com.example.courses.Helper.Constants;
@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AddressCreateRequestDTO {
-
+public class AddressRequestDTO {
+    private Integer id;
     @NotEmpty(message = "House number is required")
     private String houseNumber;
 
@@ -32,8 +32,9 @@ public class AddressCreateRequestDTO {
 
 
     // Convert DTO → Entity
-    public static Address convertToAddress(AddressCreateRequestDTO request) {
+    public static Address convertToAddress(AddressRequestDTO request) {
         Address address = new Address();
+        address.setId(request.getId());
         address.setHouseNumber(request.getHouseNumber());
         address.setStreet(request.getStreet());
         address.setCity(request.getCity());
@@ -43,7 +44,7 @@ public class AddressCreateRequestDTO {
         return address;
     }
 
-    public static void validCreateAddressRequest(AddressCreateRequestDTO request) throws Exception {
+    public static void validCreateAddressRequest(AddressRequestDTO request) throws Exception {
         if (HelperUtils.isNull(request.getHouseNumber()) || request.getHouseNumber().isBlank() || request.getHouseNumber().isEmpty()) {
             throw new Exception(Constants.BAD_REQUEST + ": House number is required");
         } else if (HelperUtils.isNull(request.getStreet()) || request.getStreet().isBlank() || request.getStreet().isEmpty()) {
@@ -57,6 +58,10 @@ public class AddressCreateRequestDTO {
         } else if (HelperUtils.isNull(request.getStudentId()) || request.getStudentId() <= 0) {
             throw new Exception(Constants.BAD_REQUEST + ": studentId is required and must be > 0");
         }
+        else if (HelperUtils. isNull(request.getId()) || request.getId() <= 0) {
+            throw new Exception(Constants.BAD_REQUEST + ": id is required and must be > 0");
+        }
     }
 }
+
 
